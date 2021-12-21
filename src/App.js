@@ -7,6 +7,7 @@ class App extends Component {
   state = {
     searchForm: '',
     showModal: false,
+    localHostStatus: false,
   };
 
   saveSearch = searchForm => {
@@ -20,15 +21,24 @@ class App extends Component {
     }));
   };
 
+  localStorStatus = () => {
+    this.setState(({ localHostStatus }) => ({
+      localHostStatus: !localHostStatus,
+    }));
+  };
+
   render() {
     return (
       <div>
         {this.state.showModal && <h1>Грузим</h1>}
-        <button onClick={this.testThis}>click me</button>
-        <SearchBar saveSubmit={this.saveSearch} />
+        <SearchBar
+          saveSubmit={this.saveSearch}
+          upLocalStatus={this.localStorStatus}
+          status={this.state.localHostStatus}
+        />
         <ImageGallery
-          spiner={this.toggleSpiner}
           formRes={this.state.searchForm}
+          localHostStatus={this.state.localHostStatus}
         />
       </div>
     );
