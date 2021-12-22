@@ -1,44 +1,54 @@
 import React, { Component } from 'react';
 import SearchBar from 'components/SearchBar/SearchBar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
-
+import Modal from 'components/Modal/Modal';
 /* import { ToastContainer } from 'react-toastify'; */
 class App extends Component {
   state = {
     searchForm: '',
     showModal: false,
     localHostStatus: false,
+    largeUrl: null,
   };
-
+  local = [];
   saveSearch = searchForm => {
     this.setState({
       searchForm,
     });
   };
-  toggleSpiner = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
-  };
+  componentDidUpdate(prevProps, prevState) {}
 
   localStorStatus = () => {
     this.setState(({ localHostStatus }) => ({
       localHostStatus: !localHostStatus,
     }));
   };
-
+  takeLarge = largeUrl => {
+    this.setState({ largeUrl });
+    this.toggleModal();
+  };
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+  };
   render() {
+    const { localHostStatus, searchForm, showModal, largeUrl } = this.state;
     return (
       <div>
-        {this.state.showModal && <h1>Грузим</h1>}
+        {showModal && (
+          <Modal url={largeUrl.largeImageURL} toggle={this.toggleModal} />
+        )}
         <SearchBar
           saveSubmit={this.saveSearch}
           upLocalStatus={this.localStorStatus}
-          status={this.state.localHostStatus}
+          status={localHostStatus}
         />
         <ImageGallery
-          formRes={this.state.searchForm}
-          localHostStatus={this.state.localHostStatus}
+          returnUrl={this.takeLarge}
+          formRes={searchForm}
+          localFoto={largeUrl}
+          localHostStatus={localHostStatus}
         />
       </div>
     );
