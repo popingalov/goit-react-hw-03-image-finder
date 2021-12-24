@@ -15,6 +15,7 @@ export default function ImageGalleryItem({ formRes, returnUrl }) {
               alt="tags"
               className={s.ImageGalleryItem_image}
             />
+            {ind === formRes.length - 12 && <div id="scroll"></div>}
           </li>
         ))}
     </>

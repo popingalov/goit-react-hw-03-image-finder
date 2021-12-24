@@ -1,6 +1,6 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import s from './SearchForm.module.css';
-/* import { toast } from 'react-toastify'; */
 export default class SearchForm extends Component {
   state = {
     searchForm: '',
@@ -43,3 +43,7 @@ export default class SearchForm extends Component {
     );
   }
 }
+
+SearchForm.propTypes = {
+  saveSubmit: PropTypes.func.isRequired,
+};

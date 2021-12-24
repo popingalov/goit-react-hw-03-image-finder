@@ -3,20 +3,100 @@ import SearchBar from 'components/SearchBar/SearchBar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Modal from 'components/Modal/Modal';
 /* import { ToastContainer } from 'react-toastify'; */
+import Api from './service/Api';
 class App extends Component {
   state = {
     searchForm: '',
     showModal: false,
     localHostStatus: false,
+    storeFoto: null,
     largeUrl: null,
+    page: 1,
+    status: 'idle',
+    arrayImage: [],
+    error: '',
   };
-  local = [];
+
   saveSearch = searchForm => {
     this.setState({
       searchForm,
+      localHostStatus: false,
     });
   };
-  componentDidUpdate(prevProps, prevState) {}
+  componentDidMount() {
+    const localArray = JSON.parse(localStorage.getItem('myFoto'));
+    if (localArray) {
+      this.setState({
+        storeFoto: localArray,
+      });
+    }
+  }
+  apiArray = (formRes, page) => {
+    return Api(formRes, page);
+  };
+  morePage = () => {
+    this.setState(prevState => ({
+      status: 'pending',
+      page: prevState.page + 1,
+    }));
+  };
+  startStatus = () => {
+    this.setState({
+      status: 'idle',
+    });
+  };
+  componentDidUpdate(prevProps, prevState) {
+    const { largeUrl, searchForm, page } = this.state;
+
+    const localArray = JSON.parse(localStorage.getItem('myFoto'));
+    if (largeUrl) {
+      if (!localArray) {
+        localStorage.setItem('myFoto', JSON.stringify([largeUrl]));
+        this.setState({ storeFoto: [largeUrl] });
+        return;
+      }
+
+      if (!localArray.find(foto => largeUrl.id === foto.id)) {
+        localArray.push(largeUrl);
+        localStorage.setItem('myFoto', JSON.stringify(localArray));
+        this.setState({ storeFoto: localArray });
+        return;
+      }
+    }
+
+    if (prevState.page !== page) {
+      this.apiArray(searchForm, page).then(res => {
+        this.setState(prevState => ({
+          arrayImage: [...prevState.arrayImage, ...res],
+          status: 'resolved',
+        }));
+        document
+          .getElementById('scroll')
+          .scrollIntoView({ block: 'center', behavior: 'smooth' });
+      });
+
+      return;
+    }
+    if (prevState.searchForm !== searchForm) {
+      this.setState({ status: 'pending' });
+      this.apiArray(searchForm, 1)
+        .then(res => {
+          if (res.length > 0) {
+            this.setState({
+              arrayImage: res,
+              status: 'resolved',
+            });
+            return;
+          }
+          return Promise.reject(
+            new Error(
+              `По вашему запросу ${searchForm} небыло совпадений, крутите барабан`,
+            ),
+          );
+        })
+        .catch(error => this.setState({ error, status: 'rejected' }));
+    }
+  }
 
   localStorStatus = () => {
     this.setState(({ localHostStatus }) => ({
@@ -33,7 +113,15 @@ class App extends Component {
     }));
   };
   render() {
-    const { localHostStatus, searchForm, showModal, largeUrl } = this.state;
+    const {
+      localHostStatus,
+      showModal,
+      largeUrl,
+      storeFoto,
+      status,
+      arrayImage,
+      error,
+    } = this.state;
     return (
       <div>
         {showModal && (
@@ -45,10 +133,14 @@ class App extends Component {
           status={localHostStatus}
         />
         <ImageGallery
+          morePage={this.morePage}
           returnUrl={this.takeLarge}
-          formRes={searchForm}
-          localFoto={largeUrl}
+          status={status}
+          storeFoto={storeFoto}
           localHostStatus={localHostStatus}
+          arrayImage={arrayImage}
+          resetStatus={this.startStatus}
+          errorMessage={error.message}
         />
       </div>
     );

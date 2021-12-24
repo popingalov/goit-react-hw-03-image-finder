@@ -19,6 +19,6 @@ export default class SearchBar extends Component {
 
 SearchBar.propTypes = {
   saveSubmit: PropTypes.func.isRequired,
-  status: PropTypes.bool,
+  status: PropTypes.bool.isRequired,
   upLocalStatus: PropTypes.func.isRequired,
 };

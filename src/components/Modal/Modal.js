@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import s from './Modal.module.css';
 import { createPortal } from 'react-dom';
 import { Component } from 'react/cjs/react.production.min';
@@ -29,3 +30,8 @@ export default class Modal extends Component {
     );
   }
 }
+
+Modal.propTypes = {
+  toggle: PropTypes.func.isRequired,
+  url: PropTypes.string.isRequired,
+};
