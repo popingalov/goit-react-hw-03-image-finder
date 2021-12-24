@@ -151,7 +151,6 @@ class App extends Component {
           status={localHostStatus}
         />
         <ImageGallery
-          clearHistory={this.clearHistory}
           returnUrl={this.takeLarge}
           arrayImage={arrayImage}
           storeFoto={storeFoto}
@@ -161,7 +160,11 @@ class App extends Component {
         />
 
         {localHostStatus && (
-          <FotoHistory foto={storeFoto} returnUrl={this.takeLarge} />
+          <FotoHistory
+            foto={storeFoto}
+            returnUrl={this.takeLarge}
+            clearHistory={this.clearHistory}
+          />
         )}
 
         {arrayImage[0]?.loadMore > 12 && !localHostStatus && (

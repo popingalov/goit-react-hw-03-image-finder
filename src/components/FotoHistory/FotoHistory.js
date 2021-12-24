@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import s from './FotoHistory.module.css';
-export default function FotoHistory({ foto, returnUrl }) {
+export default function FotoHistory({ foto, returnUrl, clearHistory }) {
   return (
     <ul className={s.ImageGallery}>
+      {foto && <button onClick={clearHistory}>Clear History</button>}
       {foto &&
         foto.map(el => (
-          <li key={el.id} /* className={s.ImageGalleryItem} */>
+          <li key={el.id} className={s.ImageGalleryItem}>
             <img
               onClick={() => {
                 returnUrl(el);
