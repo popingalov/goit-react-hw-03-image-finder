@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import s from './FotoHistory.module.css';
 export default function FotoHistory({ foto, returnUrl }) {
   return (
@@ -18,3 +19,14 @@ export default function FotoHistory({ foto, returnUrl }) {
     </ul>
   );
 }
+
+FotoHistory.propTypes = {
+  foto: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+    }),
+  ),
+  returnUrl: PropTypes.func.isRequired,
+};
