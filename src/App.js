@@ -30,36 +30,23 @@ class App extends Component {
         storeFoto: localArray,
       });
     }
+    window.onunload = () => {
+      localStorage.setItem('myFoto', JSON.stringify(this.state.storeFoto));
+    };
   }
-  apiArray = (formRes, page) => {
-    return Api(formRes, page);
-  };
-  morePage = () => {
-    this.setState(prevState => ({
-      status: 'pending',
-      page: prevState.page + 1,
-    }));
-  };
-  startStatus = () => {
-    this.setState({
-      status: 'idle',
-    });
-  };
   componentDidUpdate(prevProps, prevState) {
-    const { largeUrl, searchForm, page } = this.state;
+    const { largeUrl, searchForm, page, storeFoto } = this.state;
 
-    const localArray = JSON.parse(localStorage.getItem('myFoto'));
     if (largeUrl) {
-      if (!localArray) {
-        localStorage.setItem('myFoto', JSON.stringify([largeUrl]));
+      if (!storeFoto) {
         this.setState({ storeFoto: [largeUrl] });
         return;
       }
 
-      if (!localArray.find(foto => largeUrl.id === foto.id)) {
-        localArray.push(largeUrl);
-        localStorage.setItem('myFoto', JSON.stringify(localArray));
-        this.setState({ storeFoto: localArray });
+      if (!storeFoto.find(foto => largeUrl.id === foto.id)) {
+        this.setState(prevState => ({
+          storeFoto: [...prevState.storeFoto, largeUrl],
+        }));
         return;
       }
     }
@@ -97,6 +84,23 @@ class App extends Component {
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
   }
+  clearHistory = () => {
+    this.setState({ storeFoto: null, largeUrl: null });
+  };
+  apiArray = (formRes, page) => {
+    return Api(formRes, page);
+  };
+  morePage = () => {
+    this.setState(prevState => ({
+      status: 'pending',
+      page: prevState.page + 1,
+    }));
+  };
+  startStatus = () => {
+    this.setState({
+      status: 'idle',
+    });
+  };
 
   localStorStatus = () => {
     this.setState(({ localHostStatus }) => ({
@@ -133,6 +137,7 @@ class App extends Component {
           status={localHostStatus}
         />
         <ImageGallery
+          clearHistory={this.clearHistory}
           morePage={this.morePage}
           returnUrl={this.takeLarge}
           status={status}

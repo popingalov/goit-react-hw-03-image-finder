@@ -16,10 +16,12 @@ export default function ImageGallery({
   arrayImage,
   errorMessage,
   resetStatus,
+  clearHistory,
 }) {
   if (localHostStatus) {
     return (
       <ul className={s.ImageGallery}>
+        {storeFoto && <button onClick={clearHistory}>Clear History</button>}
         <ImageGalleryItem formRes={storeFoto} returnUrl={returnUrl} />
       </ul>
     );
