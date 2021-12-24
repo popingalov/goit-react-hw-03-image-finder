@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import SearchBar from 'components/SearchBar/SearchBar';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
 import Modal from 'components/Modal/Modal';
+import Button from './components/Button/Button';
+import Idle from 'components/ImageGallery/status/Idle';
+import Spiner from 'components/ImageGallery/spiner/Spiner';
+import Rejected from 'components/ImageGallery/status/Rejected';
+import FotoHistory from 'components/FotoHistory/FotoHistory';
 /* import { ToastContainer } from 'react-toastify'; */
 import Api from './service/Api';
 class App extends Component {
@@ -35,7 +40,7 @@ class App extends Component {
     };
   }
   componentDidUpdate(prevProps, prevState) {
-    const { largeUrl, searchForm, page, storeFoto } = this.state;
+    const { largeUrl, searchForm, page, storeFoto, status } = this.state;
 
     if (largeUrl) {
       if (!storeFoto) {
@@ -65,7 +70,7 @@ class App extends Component {
       return;
     }
     if (prevState.searchForm !== searchForm) {
-      this.setState({ status: 'pending' });
+      this.setState({ status: 'pending', arrayImage: [] });
       this.apiArray(searchForm, 1)
         .then(res => {
           if (res.length > 0) {
@@ -82,6 +87,11 @@ class App extends Component {
           );
         })
         .catch(error => this.setState({ error, status: 'rejected' }));
+    }
+    if (status === 'rejected') {
+      setTimeout(() => {
+        this.setState({ status: 'idle' });
+      }, 2000);
     }
   }
   clearHistory = () => {
@@ -126,6 +136,10 @@ class App extends Component {
       arrayImage,
       error,
     } = this.state;
+    let style = null;
+    if (localHostStatus) {
+      style = { display: 'none' };
+    }
     return (
       <div>
         {showModal && (
@@ -138,15 +152,26 @@ class App extends Component {
         />
         <ImageGallery
           clearHistory={this.clearHistory}
-          morePage={this.morePage}
           returnUrl={this.takeLarge}
-          status={status}
+          arrayImage={arrayImage}
           storeFoto={storeFoto}
           localHostStatus={localHostStatus}
-          arrayImage={arrayImage}
           resetStatus={this.startStatus}
-          errorMessage={error.message}
+          style={style}
         />
+
+        {localHostStatus && (
+          <FotoHistory foto={storeFoto} returnUrl={this.takeLarge} />
+        )}
+
+        {arrayImage[0]?.loadMore > 12 && !localHostStatus && (
+          <Button morePage={this.morePage} total={arrayImage[0].loadMore} />
+        )}
+        {status === 'idle' && !localHostStatus && <Idle />}
+
+        {status === 'pending' && <Spiner />}
+
+        {status === 'rejected' && <Rejected error={error.message} />}
       </div>
     );
   }

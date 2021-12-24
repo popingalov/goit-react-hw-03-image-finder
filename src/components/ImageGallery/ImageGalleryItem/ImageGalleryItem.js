@@ -6,7 +6,7 @@ export default function ImageGalleryItem({ formRes, returnUrl }) {
       {!formRes && <h1>Просмотренных фото ещё нет</h1>}
       {formRes &&
         formRes.map((el, ind) => (
-          <li key={ind} className={s.ImageGalleryItem}>
+          <li key={el.id} className={s.ImageGalleryItem}>
             <img
               onClick={() => {
                 returnUrl(el);
