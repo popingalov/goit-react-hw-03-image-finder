@@ -5,13 +5,10 @@ import SearchForm from 'components/SearchForm/SearchForm';
 
 export default class SearchBar extends Component {
   render() {
-    const { status, saveSubmit, upLocalStatus } = this.props;
+    const { saveSubmit } = this.props;
     return (
       <header className={s.Searchbar}>
         <SearchForm saveSubmit={saveSubmit} />
-        <button onClick={upLocalStatus}>
-          {!status ? 'Моя История фото' : 'Назад к поиску'}
-        </button>
       </header>
     );
   }
@@ -19,6 +16,4 @@ export default class SearchBar extends Component {
 
 SearchBar.propTypes = {
   saveSubmit: PropTypes.func.isRequired,
-  status: PropTypes.bool.isRequired,
-  upLocalStatus: PropTypes.func.isRequired,
 };
