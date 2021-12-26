@@ -6,7 +6,6 @@ import Button from './components/Button/Button';
 import Idle from 'components/ImageGallery/status/Idle';
 import Spiner from 'components/ImageGallery/status/spiner/Spiner';
 import Rejected from 'components/ImageGallery/status/Rejected';
-/* import { ToastContainer } from 'react-toastify'; */
 import Api from './service/Api';
 class App extends Component {
   state = {
